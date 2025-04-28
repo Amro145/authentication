@@ -41,12 +41,15 @@ export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
     <h1 style="color: white; margin: 0;">Password Reset Successful</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <p>Hello,</p>
+    <p>Hello, <span>{userNama}</p>
     <p>We're writing to confirm that your password has been successfully reset.</p>
     <div style="text-align: center; margin: 30px 0;">
       <div style="background-color: #4CAF50; color: white; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; display: inline-block; font-size: 30px;">
         ✓
       </div>
+
+<a href="{loginURL}" style="display: block; margin-top: 20px; text-decoration: none; color: #4CAF50; font-weight: bold;">Go to Login</a>
+
     </div>
     <p>If you did not initiate this password reset, please contact our support team immediately.</p>
     <p>For security reasons, we recommend that you:</p>
@@ -78,7 +81,7 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
     <h1 style="color: white; margin: 0;">Password Reset</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <p>Hello,</p>
+    <p>Hello, <span>{userName}<span></p>
     <p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
     <p>To reset your password, click the button below:</p>
     <div style="text-align: center; margin: 30px 0;">

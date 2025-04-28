@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import User from "../models/auth.model.js";
 import { generateTokenAndSetCookie } from "../../lib/generateTokenAndSetCookie.js";
-import { sendWelcomeEmail, verificationEmail } from "../../mailtrap/email.js";
+import { sendResetPasswordEmail, sendResetPasswordEmailSuccess, sendWelcomeEmail, verificationEmail } from "../../mailtrap/email.js";
+import crypto from "crypto";
 export const singUp = async (req, res) => {
     const { email, password, name } = req.body;
     try {
@@ -185,18 +186,103 @@ export const logout = (req, res) => {
         });
     }
 }
-export const forgotPassword = (req, res) => {
-    res.status(200).json({
-        message: 'Hello from the forgotPassword controller!',
-    });
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                message: 'Please provide an email address!',
+            });
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({
+                message: 'User not found!',
+            });
+        }
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 1 * 60 * 60 * 1000; // 1 hou
+        await user.save();
+        // Send the reset token to the user's email
+        await sendResetPasswordEmail(email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`, user.name);
+
+        res.status(200).json({
+            message: 'Reset token sent to your email!',
+            resetToken,
+            user
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Error in the forgotPassword controller!',
+            error: error.message,
+        });
+    }
 }
-export const resetPassword = (req, res) => {
-    res.status(200).json({
-        message: 'Hello from the resetPassword controller!',
-    });
+export const resetPassword = async (req, res) => {
+    const { password } = req.body;
+    const { resetCode } = req.params;
+
+    try {
+        if (!resetCode || !password) {
+            return res.status(400).json({
+                message: 'Please provide all required fields!',
+            });
+        }
+        const user = await User.findOne({
+            resetPasswordToken: resetCode,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+        if (!user) {
+            return res.status(400).json({
+                message: 'Invalid or expired reset token!',
+            });
+        }
+        const hashPassword = await bcrypt.hash(password, 10);
+        user.password = hashPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+        await sendResetPasswordEmailSuccess(user.email, `${process.env.CLIENT_URL}/login`, user.name);
+        res.status(200).json({
+            message: 'Password reset successfully!',
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error in the resetPassword controller!',
+            error: error.message,
+        });
+
+    }
 }
-export const updatePassword = (req, res) => {
-    res.status(200).json({
-        message: 'Hello from the updatePassword controller!',
-    });
+
+export const checkAuth = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(401).json({
+                message: 'Unauthorized! No user found.',
+            });
+        }
+        res.status(200).json({
+            message: 'User authenticated successfully!',
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+                lastLogin: user.lastLogin,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error in the checkAuth controller!',
+            error: error.message,
+        });
+    }
 }

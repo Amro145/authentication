@@ -1,5 +1,6 @@
 import express from 'express';
-import { deleteUser, forgotPassword, getAllUsers, logout, resetPassword, singIn, singUp,  updatePassword, verifyEmail } from '../controllers/auth.controller.js';
+import { checkAuth, deleteUser, forgotPassword, getAllUsers, logout, resetPassword, singIn, singUp,  verifyEmail } from '../controllers/auth.controller.js';
+import { verifyToken } from '../../middleWare/verifyToken.js';
 
 const router = express.Router();
 router.post('/signup', singUp);
@@ -10,7 +11,7 @@ router.post('/signin', singIn);
 router.post('/logout', logout);
 
 router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
-router.post('/update-password', updatePassword);
+router.post('/reset-password/:resetCode', resetPassword);
+router.get('/check-auth', verifyToken, checkAuth);
 
 export default router;
