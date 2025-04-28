@@ -85,6 +85,7 @@ export const verifyEmail = async (req, res) => {
         });
     }
 }
+
 export const deleteUser = async (req, res) => {
     const { userId } = req.params;
     try {
@@ -104,6 +105,7 @@ export const deleteUser = async (req, res) => {
         });
     }
 }
+
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
@@ -119,15 +121,69 @@ export const getAllUsers = async (req, res) => {
     }
 }
 
-export const singIn = (req, res) => {
-    res.status(200).json({
-        message: 'Hello from the singIn controller!',
-    });
-}
+export const singIn = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log(email, password)
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'Please provide all required fields!',
+            });
+        }
+        const user = await User.findOne({ email }); // Fix: Use findOne instead of find
+        if (!user) {
+            return res.status(400).json({
+                message: 'User not found!',
+            });
+        }
+        if (!user.password) {
+            return res.status(400).json({
+                message: 'User password is missing!',
+            });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                message: 'Invalid credentials!',
+            });
+        }
+        if (!user.isVerfied) {
+            return res.status(400).json({
+                message: 'Email not verified!',
+            });
+        }
+        user.lastLogin = Date.now();
+        generateTokenAndSetCookie(res, user._id);
+        await user.save();
+        res.status(200).json({
+            message: 'User logged in successfully!',
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+                lastLogin: user.lastLogin,
+            },
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: 'Error in the singIn controller!',
+            error: error.message,
+        });
+    }
+};
 export const logout = (req, res) => {
-    res.status(200).json({
-        message: 'Hello from the logout controller!',
-    });
+    try {
+        res.clearCookie('token');
+        return res.status(200).json({
+            message: 'Logged out successfully!',
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Error in the logout controller!',
+            error: error.message,
+        });
+    }
 }
 export const forgotPassword = (req, res) => {
     res.status(200).json({
