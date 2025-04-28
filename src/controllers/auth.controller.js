@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/auth.model.js";
 import { generateTokenAndSetCookie } from "../../lib/generateTokenAndSetCookie.js";
-import { verificationEmail } from "../../mailtrap/email.js";
+import { sendWelcomeEmail, verificationEmail } from "../../mailtrap/email.js";
 export const singUp = async (req, res) => {
     const { email, password, name } = req.body;
     try {
@@ -47,6 +47,42 @@ export const singUp = async (req, res) => {
             error: error.message,
         });
 
+    }
+}
+
+export const verifyEmail = async (req, res) => {
+    const { verifactionToken } = req.body;
+    try {
+        const user = await User.findOne({ verifactionToken, verifactionTokenExpires: { $gt: Date.now() } });
+        if (!user) {
+            return res.status(400).json({
+                message: 'Invalid or expired verification token!',
+            });
+        }
+        if (user.isVerfied) {
+            return res.status(400).json({
+                message: 'Email already verified!',
+            });
+        }
+        user.isVerfied = true;
+        user.verifactionToken = undefined;
+        user.verifactionTokenExpires = undefined;
+        await user.save();
+        await sendWelcomeEmail(user.email, user.name);
+        return res.status(200).json({
+            message: 'Email verified successfully!',
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+            },
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error in the verifyEmail controller!',
+            error: error.message,
+        });
     }
 }
 export const deleteUser = async (req, res) => {
