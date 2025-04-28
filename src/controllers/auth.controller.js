@@ -125,7 +125,6 @@ export const getAllUsers = async (req, res) => {
 export const singIn = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password)
         if (!email || !password) {
             return res.status(400).json({
                 message: 'Please provide all required fields!',
@@ -166,7 +165,6 @@ export const singIn = async (req, res) => {
             },
         });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({
             message: 'Error in the singIn controller!',
             error: error.message,
