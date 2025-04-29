@@ -1,24 +1,76 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Singup from "./components/Singup";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import CheckEmail from "./components/CheckEmail";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/api";
 
 function App() {
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.auth);
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
   return (
     <div className="max-h-screen bg-gray-800 text-amber-50">
+      <button onClick={() => dispatch(logout())}>logout</button>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/singup" element={<Singup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/check-email" element={<CheckEmail />} />
+        <Route
+          path="/"
+          element={
+            userData ? (
+              userData.verifactionToken ? (
+                <Navigate to="/check-email" />
+              ) : (
+                <Home />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            userData ? (
+              userData.verifactionToken ? (
+                <Navigate to="/check-email" /> // Redirect to check-email page
+              ) : (
+                <Navigate to="/" /> // Redirect to home page
+              )
+            ) : (
+              <Login />
+            )
+          }
+        />
+        <Route
+          path="/singup"
+          element={userData ? <Navigate to="/" /> : <Singup />}
+        />
+        <Route
+          path="/forgot-password"
+          element={userData ? <Navigate to="/" /> : <ForgotPassword />}
+        />
+        <Route
+          path="/reset-password"
+          element={userData ? <ResetPassword /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/check-email"
+          element={
+            userData && userData.verifactionToken ? (
+              <CheckEmail />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
-    </div> 
+    </div>
   );
 }
 

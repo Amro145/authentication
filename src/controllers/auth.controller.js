@@ -32,7 +32,7 @@ export const singUp = async (req, res) => {
         await user.save();
         generateTokenAndSetCookie(res, user._id);
         await verificationEmail(email, verifactionToken, name);
-        res.status(201).json({
+        return res.status(201).json({
             message: 'User created successfully!',
             user: {
                 id: user._id,
@@ -43,7 +43,7 @@ export const singUp = async (req, res) => {
             },
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the singUp controller!',
             error: error.message,
         });
@@ -73,14 +73,13 @@ export const verifyEmail = async (req, res) => {
         return res.status(200).json({
             message: 'Email verified successfully!',
             user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
+                ...user._doc,
+                password: undefined,
             },
         });
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the verifyEmail controller!',
             error: error.message,
         });
@@ -96,11 +95,11 @@ export const deleteUser = async (req, res) => {
                 message: 'User not found!',
             });
         }
-        res.status(200).json({
+        return res.status(200).json({
             message: 'User deleted successfully!',
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the deleteUser controller!',
             error: error.message,
         });
@@ -109,13 +108,13 @@ export const deleteUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
-        res.status(200).json({
+        const users = await User.find().select("-password");
+        return res.status(200).json({
             message: 'All users fetched successfully!',
             users,
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the getAllUsers controller!',
             error: error.message,
         });
@@ -147,21 +146,15 @@ export const singIn = async (req, res) => {
                 message: 'Invalid credentials!',
             });
         }
-        if (!user.isVerfied) {
-            return res.status(400).json({
-                message: 'Email not verified!',
-            });
-        }
+
         user.lastLogin = Date.now();
         generateTokenAndSetCookie(res, user._id);
         await user.save();
-        res.status(200).json({
+        return res.status(200).json({
             message: 'User logged in successfully!',
             user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
-                lastLogin: user.lastLogin,
+                ...user._doc,
+                password: undefined,
             },
         });
     } catch (error) {
@@ -205,14 +198,17 @@ export const forgotPassword = async (req, res) => {
         // Send the reset token to the user's email
         await sendResetPasswordEmail(email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`, user.name);
 
-        res.status(200).json({
+        return res.status(200).json({
             message: 'Reset token sent to your email!',
             resetToken,
-            user
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
         });
     }
     catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the forgotPassword controller!',
             error: error.message,
         });
@@ -243,16 +239,15 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordExpires = undefined;
         await user.save();
         await sendResetPasswordEmailSuccess(user.email, `${process.env.CLIENT_URL}/login`, user.name);
-        res.status(200).json({
+        return res.status(200).json({
             message: 'Password reset successfully!',
             user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
+                ...user._doc,
+                password: undefined,
             },
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the resetPassword controller!',
             error: error.message,
         });
@@ -268,17 +263,15 @@ export const checkAuth = async (req, res) => {
                 message: 'Unauthorized! No user found.',
             });
         }
-        res.status(200).json({
+        return res.status(200).json({
             message: 'User authenticated successfully!',
             user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
-                lastLogin: user.lastLogin,
+                ...user._doc,
+                password: undefined,
             },
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error in the checkAuth controller!',
             error: error.message,
         });
