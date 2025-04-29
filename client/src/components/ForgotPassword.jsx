@@ -1,9 +1,13 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { forgotPassword } from "../../store/api";
+import { useDispatch, useSelector } from "react-redux";
 
 function ForgotPassword() {
+  const dispatch = useDispatch();
+  const { forgotPasswordLoading } = useSelector((x) => x.auth);
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email("Invalid Email").required("Email is required"),
   });
@@ -11,13 +15,15 @@ function ForgotPassword() {
     <div className="h-screen flex flex-col gap-4 items-center justify-center ">
       <h1 className="text-4xl">Forgot Password</h1>
       <Formik
-        initialValues={{ password: "" }}
+        initialValues={{ email: "" }}
         validationSchema={LoginSchema}
         onSubmit={(values) => {
           console.log(values);
+          dispatch(forgotPassword({ email: values.email }));
+          Navigate("/check-email"); 
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isValid }) => (
           <Form className="flex flex-col gap-4 w-[400px]">
             <div className="flex flex-col gap-2">
               <label htmlFor="email"> Enter Your Email </label>
@@ -36,7 +42,7 @@ function ForgotPassword() {
             <button
               type="submit"
               className="bg-green-900 p-1 cursor-pointer hover:bg-green-700 duration-200 "
-              disabled={isSubmitting}
+              disabled={!isValid || forgotPasswordLoading}
             >
               send Reset Link
             </button>

@@ -23,7 +23,11 @@ function App() {
           path="/"
           element={
             userData ? (
-              userData.verifactionToken ? (
+              userData?.resetPasswordToken ? (
+                <Navigate
+                  to={`/reset-password/${userData.resetPasswordToken}`}
+                />
+              ) : userData?.verificationToken ? (
                 <Navigate to="/check-email" />
               ) : (
                 <Home />
@@ -37,7 +41,7 @@ function App() {
           path="/login"
           element={
             userData ? (
-              userData.verifactionToken ? (
+              userData?.verificationToken ? (
                 <Navigate to="/check-email" /> // Redirect to check-email page
               ) : (
                 <Navigate to="/" /> // Redirect to home page
@@ -56,13 +60,19 @@ function App() {
           element={userData ? <Navigate to="/" /> : <ForgotPassword />}
         />
         <Route
-          path="/reset-password"
-          element={userData ? <ResetPassword /> : <Navigate to="/login" />}
+          path="/reset-password/:token"
+          element={
+            userData?.resetPasswordToken ? (
+              <ResetPassword token={userData.resetPasswordToken} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
         />
         <Route
           path="/check-email"
           element={
-            userData && userData.verifactionToken ? (
+            userData && userData.verificationToken ? (
               <CheckEmail />
             ) : (
               <Navigate to="/login" />

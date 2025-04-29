@@ -1,9 +1,14 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { resetPassword } from "../../store/api";
 
-function ResetPassword() {
+function ResetPassword({ token }) {
+  console.log("token", token);
+  const dispatch = useDispatch();
+  // const { resetPasswordLoading } = useSelector((x) => x.auth);
+
   const resetPasswordSchema = Yup.object().shape({
     password: Yup.string()
       .min(8, "password must be at least 8 characters")
@@ -16,13 +21,12 @@ function ResetPassword() {
         initialValues={{ password: "" }}
         validationSchema={resetPasswordSchema}
         onSubmit={(values) => {
-          console.log(values);
+          dispatch(resetPassword({ id: token, data: values }));
+
         }}
       >
         {({ isSubmitting }) => (
           <Form className="flex flex-col gap-4 w-[400px]">
-            
-
             <div className="flex flex-col gap-2">
               <label htmlFor="password"> Enter New Password</label>
               <Field
@@ -47,8 +51,6 @@ function ResetPassword() {
           </Form>
         )}
       </Formik>
-
-   
     </div>
   );
 }
