@@ -1,15 +1,20 @@
 # Authentication System
 
-This project is a Node.js-based authentication system built with Express.js and MongoDB. It includes features such as user registration, email verification, login, password reset, and user management.
+This project is a comprehensive Node.js-based authentication system designed to provide secure and efficient user management. It is built with Express.js and MongoDB and includes features such as user registration, email verification, login, password reset, and user management. The system is designed to be scalable and easy to integrate into other applications.
+
+## Purpose
+
+The purpose of this project is to provide a robust authentication system that can be used as a standalone service or integrated into larger applications. It ensures secure user authentication and management using modern technologies and best practices.
 
 ## Features
 
-- **User Registration**: Sign up with email, password, and name.
-- **Email Verification**: Verify email addresses using a verification token.
-- **Login**: Authenticate users with email and password.
-- **Password Reset**: Request and reset passwords via email.
-- **User Management**: Fetch all users and delete users.
-- **Authentication Middleware**: Protect routes using JWT-based authentication.
+- **User Registration**: Allows users to sign up with their email, password, and name.
+- **Email Verification**: Ensures email addresses are verified using a time-sensitive verification token.
+- **Login**: Authenticates users with email and password.
+- **Password Reset**: Enables users to request and reset their passwords via email.
+- **User Management**: Provides endpoints to fetch all users and delete users by ID.
+- **Authentication Middleware**: Protects routes using JWT-based authentication.
+- **Secure Cookies**: Stores authentication tokens securely in HTTP-only cookies.
 
 ## Technologies Used
 
@@ -91,6 +96,7 @@ authentication/
 │   └── middleWare/        # Middleware functions
 ├── lib/                   # Utility functions
 ├── mailtrap/              # Email templates and configuration
+├── client/                # Frontend React application
 ├── .env                   # Environment variables
 ├── app.js                 # Main application entry point
 ├── package.json           # Project metadata and dependencies
@@ -104,6 +110,10 @@ authentication/
 3. **Login**: Send a POST request to `/signin` with `email` and `password`.
 4. **Forgot Password**: Request a password reset by sending your email to `/forgot-password`.
 5. **Reset Password**: Use the reset token to reset your password via `/reset-password/:code`.
+
+## Frontend Integration
+
+The project includes a React-based frontend application located in the `client/` directory. It provides a user-friendly interface for interacting with the authentication system.
 
 ## License
 
