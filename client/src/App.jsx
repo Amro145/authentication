@@ -9,15 +9,28 @@ import CheckEmail from "./components/CheckEmail";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth, logout } from "../store/api";
 import Loading from "./components/Loading";
+import Swal from "sweetalert2";
 
 function App() {
   const dispatch = useDispatch();
-  const { userData, checkLoading } = useSelector((state) => state.auth);
+  const { userData, checkLoading, error } = useSelector((state) => state.auth);
+  console.log(error);
+
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
   return checkLoading ? (
     <Loading />
+  ) : error ? (
+    Swal.fire({
+      icon: "error",
+      title: error.message || "An error occurred",
+      showConfirmButton: false,
+      timer: 2000,
+    }).then(() => {
+      localStorage.removeItem("userData");
+      dispatch(logout());
+    })
   ) : (
     <div className="max-h-screen bg-gray-800 text-amber-50">
       <div className="flex justify-center items-center">
