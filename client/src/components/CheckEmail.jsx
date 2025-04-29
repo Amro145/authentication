@@ -3,8 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { checkEmail } from "../../store/api";
+import Loading from "./Loading";
 
-// 15499420
 function CheckEmail() {
   const dispatch = useDispatch();
   const { checkEmailLoading } = useSelector((x) => x.auth);
@@ -16,7 +16,9 @@ function CheckEmail() {
       .max(8, "Code must be 8 digits")
       .required("Code is required"),
   });
-  return (
+  return checkEmailLoading ? (
+    <Loading />
+  ) : (
     <div className="h-screen flex flex-col gap-4 items-center justify-center ">
       <h1 className="text-4xl">verify Email</h1>
 

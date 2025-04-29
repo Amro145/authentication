@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Link, Navigate } from "react-router-dom";
 import { forgotPassword } from "../../store/api";
 import { useDispatch, useSelector } from "react-redux";
+import Loading from "./Loading";
 
 function ForgotPassword() {
   const dispatch = useDispatch();
@@ -11,7 +12,9 @@ function ForgotPassword() {
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email("Invalid Email").required("Email is required"),
   });
-  return (
+  return forgotPasswordLoading ? (
+    <Loading />
+  ) : (
     <div className="h-screen flex flex-col gap-4 items-center justify-center ">
       <h1 className="text-4xl">Forgot Password</h1>
       <Formik
@@ -20,7 +23,7 @@ function ForgotPassword() {
         onSubmit={(values) => {
           console.log(values);
           dispatch(forgotPassword({ email: values.email }));
-          Navigate("/check-email"); 
+          Navigate("/check-email");
         }}
       >
         {({ isValid }) => (

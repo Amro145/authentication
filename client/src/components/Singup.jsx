@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../../store/api";
+import Loading from "./Loading";
 
 function Singup() {
   const dispatch = useDispatch();
@@ -15,7 +16,9 @@ function Singup() {
       .min(8, "password must be at least 8 characters")
       .required("Password is required"),
   });
-  return (
+  return signupLoading ? (
+    <Loading />
+  ) : (
     <div className="h-screen flex flex-col gap-4 items-center justify-center ">
       <h1 className="text-4xl">Singup</h1>
       <Formik
@@ -24,7 +27,6 @@ function Singup() {
         onSubmit={(values) => {
           dispatch(signup(values));
           console.log(userData);
-         
         }}
       >
         {({ isValid }) => (

@@ -7,17 +7,25 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import CheckEmail from "./components/CheckEmail";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../store/api";
+import { checkAuth, logout } from "../store/api";
+import Loading from "./components/Loading";
 
 function App() {
   const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state.auth);
+  const { userData, checkLoading } = useSelector((state) => state.auth);
   useEffect(() => {
-    console.log(userData);
-  }, [userData]);
-  return (
+    dispatch(checkAuth());
+  }, [dispatch]);
+  return checkLoading ? (
+    <Loading />
+  ) : (
     <div className="max-h-screen bg-gray-800 text-amber-50">
-      <button onClick={() => dispatch(logout())}>logout</button>
+      <div className="flex justify-center items-center">
+        {userData ? (
+          <button onClick={() => dispatch(logout())}>logout</button>
+        ) : null}
+      </div>
+
       <Routes>
         <Route
           path="/"
@@ -79,6 +87,7 @@ function App() {
             )
           }
         />
+        <Route path="/loading" element={<Loading />} />
       </Routes>
     </div>
   );

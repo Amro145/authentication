@@ -64,3 +64,11 @@ export const resetPassword = createAsyncThunk("auth/resetPassword", async ({ id,
         return rejectWithValue(error.response?.data || error.message);
     }
 });
+export const checkAuth = createAsyncThunk("auth/checkAuth", async ({ rejectWithValue }) => {
+    try {
+        const res = await axios.get(`localhost:3000/check-auth`, { withCredentials: true });
+        return res.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || error.message);
+    }
+});

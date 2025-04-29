@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../store/api";
+import Loading from "./Loading";
 
 function Login() {
   const dispatch = useDispatch();
@@ -15,7 +16,9 @@ function Login() {
   });
   const { userData, signinLoading } = useSelector((state) => state.auth);
 
-  return (
+  return signinLoading ? (
+    <Loading />
+  ) : (
     <div className="h-screen flex flex-col gap-4 items-center justify-center ">
       <h1 className="text-4xl">Login</h1>
       <Formik

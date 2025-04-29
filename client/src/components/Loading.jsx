@@ -7,12 +7,12 @@ function Loading() {
         <div className="relative w-32 h-32">
           <div
             className="absolute w-full h-full rounded-full border-[3px] border-gray-100/10 border-r-[#0ff] border-b-[#0ff] animate-spin"
-            style="animation-duration: 3s;"
+            style={{ animationDuration: "3s" }}
           ></div>
 
           <div
             className="absolute w-full h-full rounded-full border-[3px] border-gray-100/10 border-t-[#0ff] animate-spin"
-            style="animation-duration: 2s; animation-direction: reverse;"
+            style={{ animationDuration: "2s", animationDirection: "reverse" }}
           ></div>
         </div>
 

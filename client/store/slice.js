@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { checkEmail, forgotPassword, login, logout, resetPassword, signup } from "./api";
+import { checkAuth, checkEmail, forgotPassword, login, logout, resetPassword, signup } from "./api";
 
 const initialState = {
     userData: null,
@@ -17,6 +17,20 @@ const authSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
         builder
+            // checkAuth
+            .addCase(checkAuth.pending, (state) => {
+                state.checkLoading = true;
+                state.error = null
+            })
+            .addCase(checkAuth.fulfilled, (state, action) => {
+                state.checkLoading = false;
+                state.userData = action.payload.user;
+                localStorage.setItem("userData", JSON.stringify(action.payload.user));
+            })
+            .addCase(checkAuth.rejected, (state, action) => {
+                state.checkLoading = false;
+                state.error = action.payload
+            })
             // signup
             .addCase(signup.pending, (state) => {
                 state.signupLoading = true;
