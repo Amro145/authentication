@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { checkEmail, forgotPassword, login, logout, resetPassword, signup } from "./api";
 
 const initialState = {
-    userData: [],
+    userData: null,
     checkLoading: false,
     signupLoading: false,
     signinLoading: false,

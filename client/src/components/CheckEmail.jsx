@@ -4,14 +4,15 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { checkEmail } from "../../store/api";
 
+// 15499420
 function CheckEmail() {
   const dispatch = useDispatch();
   const { checkEmailLoading } = useSelector((x) => x.auth);
 
   const checkEmailSchema = Yup.object().shape({
-    code: Yup.string()
+    verifactionToken: Yup.string()
       .matches(/^[0-9]+$/, "Code must be a number")
-      .min(6, "Code must be 8 digits")
+      .min(6, "Code must be 6 digits")
       .max(8, "Code must be 8 digits")
       .required("Code is required"),
   });
@@ -20,23 +21,25 @@ function CheckEmail() {
       <h1 className="text-4xl">verify Email</h1>
 
       <Formik
-        initialValues={{ code: "" }}
+        initialValues={{ verifactionToken: "" }}
         validationSchema={checkEmailSchema}
         onSubmit={(values) => {
-          dispatch(checkEmail(values));
+          const numericCode = Number(values.verifactionToken);
+          dispatch(checkEmail({ verifactionToken: numericCode }));
+          console.log(values);
         }}
       >
         {({ isValid }) => (
           <Form className="flex flex-col gap-4 w-[400px]">
             <div className="flex flex-col gap-2">
-              <label htmlFor="code"> Enter Code</label>
+              <label htmlFor="verifactionToken">Enter Code</label>
               <Field
                 className="border-2 p-1 border-black"
-                type="string"
-                name="code"
+                type="number"
+                name="verifactionToken"
               />
               <ErrorMessage
-                name="code"
+                name="verifactionToken"
                 component="div"
                 className="error text-red-500"
               />
