@@ -1,4 +1,5 @@
 import { generateTokenAndSetCookie } from "../utils/token.js";
+import { ErrorHandler } from "../utils/ErrorHandler.js";
 import {
     sendResetPasswordEmail,
     sendResetPasswordEmailSuccess,
@@ -8,6 +9,8 @@ import {
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { COOKIE_NAME } from "../config/constants.js";
 import * as authService from "../services/auth.service.js";
+
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
 export const signUp = asyncHandler(async (req, res, next) => {
     const { email, password, name } = req.body;
@@ -114,7 +117,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
     try {
         await sendResetPasswordEmail(
             email,
-            `${process.env.CLIENT_URL}/reset-password/${resetToken}`,
+            `${CLIENT_URL}/reset-password/${resetToken}`,
             user.name
         );
     } catch (error) {
@@ -122,12 +125,14 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
         emailSent = false;
     }
 
+    if (!emailSent) {
+        return next(new ErrorHandler(500, "Failed to send password reset email. Please try again later."));
+    }
+
     res.status(200).json({
         success: true,
-        message: emailSent
-            ? "Reset token sent to your email!"
-            : "Password reset requested, but we failed to send the email. Please try again later.",
-        data: emailSent ? { resetToken } : null,
+        message: "Reset token sent to your email!",
+        data: null,
     });
 });
 
@@ -140,7 +145,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
     try {
         await sendResetPasswordEmailSuccess(
             user.email,
-            `${process.env.CLIENT_URL}/login`,
+            `${CLIENT_URL}/login`,
             user.name
         );
     } catch (error) {

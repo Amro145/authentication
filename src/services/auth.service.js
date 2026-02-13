@@ -105,5 +105,6 @@ export const resetUserPassword = async (resetCode, newPassword) => {
     user.password = hashPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
+    user.isVerified = true; // Auto-verify email on successful password reset
     return await user.save();
 };
