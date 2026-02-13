@@ -8,6 +8,7 @@ import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { ErrorHandler } from './src/utils/ErrorHandler.js';
 import authRoutes from "./src/routes/auth.route.js";
+import { setupSwagger } from './src/config/swagger.js';
 
 dotenv.config();
 
@@ -39,6 +40,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(morgan('dev'));
+
+// Swagger Documentation
+setupSwagger(app);
 
 // Routes
 app.use("/", authRoutes);
