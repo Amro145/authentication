@@ -14,16 +14,26 @@ export const signUp = asyncHandler(async (req, res, next) => {
     const user = await authService.createUser({ email, password, name });
 
     generateTokenAndSetCookie(res, user._id);
-    await verificationEmail(email, user.verificationToken, name);
+
+    let emailSent = true;
+    try {
+        await verificationEmail(email, user.verificationToken, name);
+    } catch (error) {
+        console.error("Signup Email Error:", error.message);
+        emailSent = false;
+    }
 
     res.status(201).json({
         success: true,
-        message: "User created successfully!",
+        message: emailSent
+            ? "User created successfully! Please check your email for the verification code."
+            : "User created successfully, but we couldn't send the verification email. You can try to resend it from your profile later.",
         data: {
             id: user._id,
             email: user.email,
             name: user.name,
             isVerified: user.isVerified,
+            emailSent
         },
     });
 });
@@ -32,7 +42,11 @@ export const verifyEmail = asyncHandler(async (req, res, next) => {
     const { verificationToken } = req.body;
     const user = await authService.verifyUserEmail(verificationToken);
 
-    await sendWelcomeEmail(user.email, user.name);
+    try {
+        await sendWelcomeEmail(user.email, user.name);
+    } catch (error) {
+        console.error("Welcome Email Error:", error.message);
+    }
 
     res.status(200).json({
         success: true,
@@ -96,16 +110,24 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
     const { email } = req.body;
     const { user, resetToken } = await authService.generateResetToken(email);
 
-    await sendResetPasswordEmail(
-        email,
-        `${process.env.CLIENT_URL}/reset-password/${resetToken}`,
-        user.name
-    );
+    let emailSent = true;
+    try {
+        await sendResetPasswordEmail(
+            email,
+            `${process.env.CLIENT_URL}/reset-password/${resetToken}`,
+            user.name
+        );
+    } catch (error) {
+        console.error("Forgot Password Email Error:", error.message);
+        emailSent = false;
+    }
 
     res.status(200).json({
         success: true,
-        message: "Reset token sent to your email!",
-        data: { resetToken },
+        message: emailSent
+            ? "Reset token sent to your email!"
+            : "Password reset requested, but we failed to send the email. Please try again later.",
+        data: emailSent ? { resetToken } : null,
     });
 });
 
@@ -115,11 +137,15 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
     const user = await authService.resetUserPassword(resetCode, password);
 
-    await sendResetPasswordEmailSuccess(
-        user.email,
-        `${process.env.CLIENT_URL}/login`,
-        user.name
-    );
+    try {
+        await sendResetPasswordEmailSuccess(
+            user.email,
+            `${process.env.CLIENT_URL}/login`,
+            user.name
+        );
+    } catch (error) {
+        console.error("Reset Password Success Email Error:", error.message);
+    }
 
     res.status(200).json({
         success: true,
