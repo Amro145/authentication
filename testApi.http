@@ -1,5 +1,5 @@
-@baseUrl = http://localhost:3000
-@email = amroaltayeb14@gmail.com
+@baseUrl = https://authentication-seven-psi.vercel.app/
+@email = amroaltayeb37@gmail.com
 @password = password123
 @name = Test User
 @resetCode = c7514e496e1c02444fd69f42e8ff442aa05ca55692b19f71862f6e9176f36e94
@@ -20,7 +20,7 @@ POST {{baseUrl}}/verify-email
 Content-Type: application/json
 
 {
-    "verificationToken": "244255"
+    "verificationToken": "764624"
 }
 
 ### Sign In
