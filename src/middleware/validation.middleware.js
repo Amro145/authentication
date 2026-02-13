@@ -20,13 +20,13 @@ export const validateRequest = (schema) => {
 
 export const signUpSchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(8).required(),
     name: Joi.string().min(2).required(),
 });
 
 export const signInSchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    password: Joi.string().min(8).required(),
 });
 
 export const forgotPasswordSchema = Joi.object({
@@ -34,9 +34,9 @@ export const forgotPasswordSchema = Joi.object({
 });
 
 export const resetPasswordSchema = Joi.object({
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(8).required(),
 });
 
 export const verifyEmailSchema = Joi.object({
-    verificationToken: Joi.string().required(),
+    verificationToken: Joi.string().length(6).required(),
 });
