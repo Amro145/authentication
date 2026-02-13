@@ -29,7 +29,7 @@ app.use("/signup", limiter);
 app.use("/signin", limiter);
 
 app.use(cors({
-    origin: 'https://authentication-client-six.vercel.app',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true
@@ -51,11 +51,36 @@ app.use("/", authRoutes);
 app.use((err, req, res, next) => {
     let { statusCode, message } = err;
 
+    // Default values
+    statusCode = statusCode || 500;
+    message = message || "Internal Server Error";
+
+    // Handle Mongoose Duplicate Key Error
+    if (err.code === 11000) {
+        statusCode = 400;
+        message = `Duplicate field value entered: ${Object.keys(err.keyValue)}`;
+    }
+
+    // Handle Mongoose Cast Error (Invalid ID)
+    if (err.name === 'CastError') {
+        statusCode = 400;
+        message = `Resource not found. Invalid: ${err.path}`;
+    }
+
+    // Handle JWT Errors
+    if (err.name === 'JsonWebTokenError') {
+        statusCode = 401;
+        message = 'Invalid token. Please log in again.';
+    }
+
+    if (err.name === 'TokenExpiredError') {
+        statusCode = 401;
+        message = 'Your session has expired. Please log in again.';
+    }
+
     if (!(err instanceof ErrorHandler)) {
-        statusCode = statusCode || 500;
-        message = message || "Internal Server Error";
         // Log unexpected errors for developers
-        console.error(`[Error]: ${err.stack || err.message}`);
+        console.error(`[Unexpected Error]: ${err.stack || err.message}`);
     }
 
     res.status(statusCode).json({
