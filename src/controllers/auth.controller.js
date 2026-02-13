@@ -140,6 +140,8 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
     const { password } = req.body;
     const { resetCode } = req.params;
 
+    console.log(`[resetPassword] Attempting reset. Token: ${resetCode}, Password Length: ${password?.length}`);
+
     const user = await authService.resetUserPassword(resetCode, password);
 
     try {

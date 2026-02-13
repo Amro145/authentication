@@ -92,13 +92,18 @@ export const generateResetToken = async (email) => {
 };
 
 export const resetUserPassword = async (resetCode, newPassword) => {
+    // 1. Find user by token only
     const user = await User.findOne({
         resetPasswordToken: resetCode,
-        resetPasswordExpires: { $gt: Date.now() },
     });
 
     if (!user) {
-        throw new ErrorHandler(400, "Invalid or expired reset token!");
+        throw new ErrorHandler(400, "Invalid reset token! User not found.");
+    }
+
+    // 2. Check expiration
+    if (user.resetPasswordExpires < Date.now()) {
+        throw new ErrorHandler(400, "Reset token has expired! Please request a new one.");
     }
 
     const hashPassword = await bcrypt.hash(newPassword, 12);
