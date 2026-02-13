@@ -1,0 +1,63 @@
+@baseUrl = http://localhost:3000
+@email = amroaltayeb37@gmail.com
+@password = password123
+@name = Test User
+@resetCode = 4a2830a231ea51fbb466247ccf881c6c4e74c18c9f7b874e9a3044399ce03fa6
+@newPassword = newpassword123
+### Sign Up
+POST {{baseUrl}}/signup
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}",
+    "name": "{{name}}"
+}
+
+### Verify Email
+# Replace verificationToken with the code from the database/email
+POST {{baseUrl}}/verify-email
+Content-Type: application/json
+
+{
+    "verificationToken": "229041"
+}
+
+### Sign In
+POST {{baseUrl}}/signin
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+
+### Check Auth (Requires being logged in)
+GET {{baseUrl}}/check-auth
+
+### Forgot Password
+POST {{baseUrl}}/forgot-password
+Content-Type: application/json
+
+{
+    "email": "{{email}}"
+}
+
+### Reset Password
+# Replace :resetCode with the token from the forgot-password email link
+POST {{baseUrl}}/reset-password/{{resetCode}}
+Content-Type: application/json
+
+{
+    "password": "{{newPassword}}"
+}
+
+### Logout
+POST {{baseUrl}}/logout
+
+### Admin: Get All Users
+GET {{baseUrl}}/getall
+
+### Admin: Delete User
+# Replace :userId with an actual user ID
+DELETE {{baseUrl}}/delete/USER_ID_HERE

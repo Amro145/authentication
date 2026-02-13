@@ -69,13 +69,20 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
     try {
         await connectToDb();
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
+        // Only call listen if not running as a serverless function
+        if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+            app.listen(PORT, () => {
+                console.log(`Server is running on port ${PORT}`);
+            });
+        }
     } catch (error) {
         console.error('Failed to start the server:', error.message);
-        process.exit(1);
+        if (process.env.NODE_ENV !== 'production') {
+            process.exit(1);
+        }
     }
 };
 
 startServer();
+
+export default app;
