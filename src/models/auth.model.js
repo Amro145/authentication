@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        select: false,
     },
     name: {
         type: String,
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    isVerfied: {
+    isVerified: {
         type: Boolean,
         default: false,
     },
@@ -31,13 +32,13 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpires: {
         type: Date,
     },
-    verifactionToken: {
+    verificationToken: {
         type: String,
     },
-    verifactionTokenExpires: {
+    verificationTokenExpires: {
         type: Date,
     },
 }, { timestamps: true });
 
-const User = mongoose.model("User", userSchema);  
+const User = mongoose.model("User", userSchema);
 export default User;

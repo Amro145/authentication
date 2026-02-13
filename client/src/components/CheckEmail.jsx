@@ -10,7 +10,7 @@ function CheckEmail() {
   const { checkEmailLoading } = useSelector((x) => x.auth);
 
   const checkEmailSchema = Yup.object().shape({
-    verifactionToken: Yup.string()
+    verificationToken: Yup.string()
       .matches(/^[0-9]+$/, "Code must be a number")
       .min(6, "Code must be 6 digits")
       .max(8, "Code must be 8 digits")
@@ -23,25 +23,25 @@ function CheckEmail() {
       <h1 className="text-4xl">verify Email</h1>
 
       <Formik
-        initialValues={{ verifactionToken: "" }}
+        initialValues={{ verificationToken: "" }}
         validationSchema={checkEmailSchema}
         onSubmit={(values) => {
-          const numericCode = Number(values.verifactionToken);
-          dispatch(checkEmail({ verifactionToken: numericCode }));
+          const numericCode = Number(values.verificationToken);
+          dispatch(checkEmail({ verificationToken: numericCode }));
           console.log(values);
         }}
       >
         {({ isValid }) => (
           <Form className="flex flex-col gap-4 w-[400px]">
             <div className="flex flex-col gap-2">
-              <label htmlFor="verifactionToken">Enter Code</label>
+              <label htmlFor="verificationToken">Enter Code</label>
               <Field
                 className="border-2 p-1 border-black"
                 type="number"
-                name="verifactionToken"
+                name="verificationToken"
               />
               <ErrorMessage
-                name="verifactionToken"
+                name="verificationToken"
                 component="div"
                 className="error text-red-500"
               />

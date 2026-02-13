@@ -4,15 +4,16 @@ import connectToDb from './lib/connectToDb.js';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import cors from "cors"
+import cors from "cors";
+import { ErrorHandler } from './src/utils/ErrorHandler.js';
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true
@@ -24,13 +25,37 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(morgan('dev'));
-app.use("/", (await import("./src/routes/auth.route.js")).default);
-connectToDb()
-    .then(() => {
+
+// Routes
+import authRoutes from "./src/routes/auth.route.js";
+app.use("/", authRoutes);
+
+// Global Error Handler Middleware
+app.use((err, req, res, next) => {
+    let { statusCode, message } = err;
+
+    if (!(err instanceof ErrorHandler)) {
+        statusCode = statusCode || 500;
+        message = message || "Internal Server Error";
+    }
+
+    res.status(statusCode).json({
+        success: false,
+        message,
+        data: null
+    });
+});
+
+const startServer = async () => {
+    try {
+        await connectToDb();
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
-    })
-    .catch((error) => {
+    } catch (error) {
         console.error('Failed to start the server:', error.message);
-    });
+        process.exit(1);
+    }
+};
+
+startServer();
