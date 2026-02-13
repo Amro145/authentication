@@ -73,7 +73,7 @@ function App() {
           }
         />
         <Route
-          path="/singup"
+          path="/signup"
           element={userData ? <Navigate to="/" /> : <Singup />}
         />
         <Route

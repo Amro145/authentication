@@ -1,6 +1,6 @@
 import express from 'express';
 import { checkAuth, deleteUser, forgotPassword, getAllUsers, logout, resetPassword, signIn, signUp, verifyEmail } from '../controllers/auth.controller.js';
-import { verifyToken } from '../../middleWare/verifyToken.js';
+import { verifyToken } from '../../middleware/verifyToken.js';
 
 const router = express.Router();
 router.post('/signup', signUp);
