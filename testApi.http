@@ -1,8 +1,8 @@
 @baseUrl = http://localhost:3000
-@email = amroaltayeb37@gmail.com
+@email = amroaltayeb14@gmail.com
 @password = password123
 @name = Test User
-@resetCode = 4a2830a231ea51fbb466247ccf881c6c4e74c18c9f7b874e9a3044399ce03fa6
+@resetCode = c7514e496e1c02444fd69f42e8ff442aa05ca55692b19f71862f6e9176f36e94
 @newPassword = newpassword123
 ### Sign Up
 POST {{baseUrl}}/signup
@@ -20,7 +20,7 @@ POST {{baseUrl}}/verify-email
 Content-Type: application/json
 
 {
-    "verificationToken": "229041"
+    "verificationToken": "244255"
 }
 
 ### Sign In
