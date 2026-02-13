@@ -90,12 +90,13 @@ The purpose of this project is to provide a robust authentication system that ca
 ```
 authentication/
 ├── src/
+│   ├── config/            # Configuration and Constants
 │   ├── controllers/       # Controller logic
+│   ├── middleware/        # Custom middleware (Auth, Validation)
 │   ├── models/            # Mongoose models
 │   ├── routes/            # API routes
-│   └── middleWare/        # Middleware functions
-├── lib/                   # Utility functions
-├── mailtrap/              # Email templates and configuration
+│   ├── services/          # External services (Email)
+│   └── utils/             # Helper functions and utilities
 ├── client/                # Frontend React application
 ├── .env                   # Environment variables
 ├── app.js                 # Main application entry point
