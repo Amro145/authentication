@@ -10,7 +10,7 @@ export const createUser = async ({ email, password, name }) => {
         throw new ErrorHandler(400, "User already exists!");
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 12);
     const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
     const verificationTokenExpires = Date.now() + VERIFICATION_TOKEN_EXPIRY;
 
@@ -101,7 +101,7 @@ export const resetUserPassword = async (resetCode, newPassword) => {
         throw new ErrorHandler(400, "Invalid or expired reset token!");
     }
 
-    const hashPassword = await bcrypt.hash(newPassword, 10);
+    const hashPassword = await bcrypt.hash(newPassword, 12);
     user.password = hashPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
