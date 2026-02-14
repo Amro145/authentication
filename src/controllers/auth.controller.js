@@ -170,7 +170,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 export const checkAuth = asyncHandler(async (req, res, next) => {
     const user = await authService.findUserById(req.userId);
     if (!user) {
-        throw new ErrorHandler(401, "Unauthorized! No user found.");
+        console.log("No user found!");
     }
     res.status(200).json({
         success: true,
