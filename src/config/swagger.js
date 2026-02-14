@@ -5,46 +5,69 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Authentication API',
-            version: '1.0.0',
-            description: 'API documentation for the Authentication service',
+            title: 'Modern Auth API v3',
+            version: '3.0.0',
+            description: 'Interactive API documentation for the Modern Authentication System. Built with high security and scalability in mind.',
+            contact: {
+                name: 'API Support',
+                email: 'support@example.com'
+            }
         },
         servers: [
             {
-                url: process.env.API_URL || 'https://authentication-seven-psi.vercel.app',
-                description: 'Development server',
+                url: 'https://authentication-phi-six.vercel.app',
+                description: 'Production Server',
             },
         ],
         components: {
             securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description: 'Enter your JWT token to access protected routes.'
+                },
                 cookieAuth: {
                     type: 'apiKey',
                     in: 'cookie',
                     name: 'token',
+                    description: 'Session cookie for browser-based authentication.'
                 },
             },
             schemas: {
                 User: {
                     type: 'object',
                     properties: {
-                        id: { type: 'string' },
-                        email: { type: 'string' },
-                        name: { type: 'string' },
-                        isVerified: { type: 'boolean' },
-                    },
+                        _id: { type: 'string', description: 'Unique identifier for the user' },
+                        email: { type: 'string', format: 'email', example: 'user@example.com' },
+                        name: { type: 'string', example: 'John Doe' },
+                        isVerified: { type: 'boolean', default: false },
+                        isAdmin: { type: 'boolean', default: false },
+                        lastLogin: { type: 'string', format: 'date-time', nullable: true },
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' }
+                    }
+                },
+                AuthResponse: {
+                    type: 'object',
+                    properties: {
+                        success: { type: 'boolean', example: true },
+                        message: { type: 'string', example: 'Operation successful' },
+                        data: { $ref: '#/components/schemas/User' }
+                    }
                 },
                 Error: {
                     type: 'object',
                     properties: {
                         success: { type: 'boolean', example: false },
-                        message: { type: 'string' },
-                        data: { type: 'object', nullable: true },
-                    },
+                        message: { type: 'string', example: 'Internal Server Error' },
+                        data: { type: 'object', nullable: true }
+                    }
                 },
             },
         },
     },
-    apis: ['./src/routes/*.js', './src/controllers/*.js'], // paths to files containing documentation
+    apis: ['./src/routes/*.js', './app.js'],
 };
 
 const specs = swaggerJsdoc(options);
