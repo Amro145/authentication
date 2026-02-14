@@ -22,6 +22,7 @@ export const verifyToken = (req, res, next) => {
         if (error instanceof ErrorHandler) {
             return next(error);
         }
-        return next(new ErrorHandler(401, "Unauthorized! Invalid token."));
+        console.log("Invalid token!");
+        // return next(new ErrorHandler(401, "Unauthorized! Invalid token."));
     }
 }
