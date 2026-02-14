@@ -11,7 +11,7 @@ export const verifyToken = (req, res, next) => {
 
     try {
         if (!token) {
-            throw new ErrorHandler(401, "Unauthorized! No token provided.");
+            console.log("No token provided!");
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.userId = decoded.userId;
