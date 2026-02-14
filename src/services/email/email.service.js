@@ -48,6 +48,7 @@ export const sendResetPasswordEmail = async (email, resetURL, name) => {
         console.log("Reset password email sent successfully:", data);
     } catch (error) {
         console.error("Error sending reset password email:", error.message || error);
+        console.error("Full Error Object:", JSON.stringify(error, null, 2));
         throw new Error(`Error sending reset password email: ${error.message}`);
     }
 };
