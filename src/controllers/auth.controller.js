@@ -30,7 +30,7 @@ export const signUp = asyncHandler(async (req, res, next) => {
         success: true,
         message: emailSent
             ? "User created successfully! Please check your email for the verification code."
-            : "User created successfully, but we couldn't send the verification email. You can try to resend it from your profile later.",
+            : "User created, but email failed to send. Please try checking your profile later to resend.",
         data: {
             id: user._id,
             email: user.email,
