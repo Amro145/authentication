@@ -9,6 +9,7 @@ import {
     signIn,
     signUp,
     verifyEmail,
+    resendVerification,
 } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middleware/auth.middleware.js';
 import {
@@ -18,6 +19,7 @@ import {
     forgotPasswordSchema,
     resetPasswordSchema,
     verifyEmailSchema,
+    resendVerificationSchema,
 } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
@@ -69,6 +71,31 @@ router.post('/signup', validateRequest(signUpSchema), signUp);
  *         description: Invalid or expired token
  */
 router.post('/verify-email', validateRequest(verifyEmailSchema), verifyEmail);
+
+/**
+ * @swagger
+ * /resend-verification:
+ *   post:
+ *     summary: Resend verification email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string }
+ *     responses:
+ *       200:
+ *         description: Verification email sent
+ *       400:
+ *         description: Bad request or user already verified
+ *       404:
+ *         description: User not found
+ */
+router.post('/resend-verification', validateRequest(resendVerificationSchema), resendVerification);
 
 /**
  * @swagger

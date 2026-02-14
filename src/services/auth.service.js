@@ -113,3 +113,22 @@ export const resetUserPassword = async (resetCode, newPassword) => {
     user.isVerified = true; // Auto-verify email on successful password reset
     return await user.save();
 };
+export const resendVerificationToken = async (email) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new ErrorHandler(404, "User not found!");
+    }
+
+    if (user.isVerified) {
+        throw new ErrorHandler(400, "Email already verified!");
+    }
+
+    const verificationToken = crypto.randomInt(100000, 999999).toString();
+    const verificationTokenExpires = Date.now() + VERIFICATION_TOKEN_EXPIRY;
+
+    user.verificationToken = verificationToken;
+    user.verificationTokenExpires = verificationTokenExpires;
+
+    await user.save();
+    return { user, verificationToken };
+};

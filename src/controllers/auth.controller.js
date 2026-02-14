@@ -177,3 +177,24 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
         },
     });
 });
+
+export const resendVerification = asyncHandler(async (req, res, next) => {
+    const { email } = req.body;
+    const { user, verificationToken } = await authService.resendVerificationToken(email);
+
+    let emailSent = true;
+    try {
+        await verificationEmail(email, verificationToken, user.name);
+    } catch (error) {
+        console.error("Resend Verification Email Error:", error.message);
+        emailSent = false;
+    }
+
+    res.status(200).json({
+        success: true,
+        message: emailSent
+            ? "A new verification code has been sent to your email."
+            : "Verification code regenerated, but email failed to send. Please try again later.",
+        data: { emailSent }
+    });
+});

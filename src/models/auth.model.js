@@ -36,11 +36,14 @@ const userSchema = new mongoose.Schema({
     },
     verificationToken: {
         type: String,
+        index: true,
     },
     verificationTokenExpires: {
         type: Date,
     },
 }, { timestamps: true });
+
+userSchema.index({ resetPasswordToken: 1 });
 
 const User = mongoose.model("User", userSchema);
 export default User;

@@ -40,3 +40,10 @@ export const resetPasswordSchema = Joi.object({
 export const verifyEmailSchema = Joi.object({
     verificationToken: Joi.string().length(6).required(),
 });
+
+export const resendVerificationSchema = Joi.object({
+    email: Joi.string().email().required().messages({
+        "string.email": "Please enter a valid email address.",
+        "any.required": "Email is required.",
+    }),
+});

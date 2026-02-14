@@ -27,6 +27,10 @@ const limiter = rateLimit({
 });
 app.use("/signup", limiter);
 app.use("/signin", limiter);
+app.use("/verify-email", limiter);
+app.use("/forgot-password", limiter);
+app.use("/reset-password", limiter);
+app.use("/resend-verification", limiter);
 
 app.use(cors({
     origin: process.env.CLIENT_URL || 'http://localhost:5173',
