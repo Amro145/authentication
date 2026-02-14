@@ -115,18 +115,20 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
 
     let emailSent = true;
     try {
+        const resetLink = `${CLIENT_URL}/reset-password/${resetToken}`;
+        console.log(`[forgotPassword] Sending reset link: ${resetLink} to ${email}`);
         await sendResetPasswordEmail(
             email,
-            `${CLIENT_URL}/reset-password/${resetToken}`,
+            resetLink,
             user.name
         );
     } catch (error) {
-        console.error("Forgot Password Email Error:", error.message);
+        console.error("Forgot Password Email Error:", error.message || error);
         emailSent = false;
     }
 
     if (!emailSent) {
-        return next(new ErrorHandler(500, "Failed to send password reset email. Please try again later."));
+        return next(new ErrorHandler(500, "Failed to send password reset email. Please ensure your email configuration is correct."));
     }
 
     res.status(200).json({
