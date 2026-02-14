@@ -18,6 +18,10 @@ const options = {
                 url: 'https://authentication-seven-psi.vercel.app',
                 description: 'Production Server',
             },
+            {
+                url: 'http://localhost:3000',
+                description: 'Local Development Server',
+            },
         ],
         components: {
             securitySchemes: {
