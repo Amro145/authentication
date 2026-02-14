@@ -15,7 +15,7 @@ const options = {
         },
         servers: [
             {
-                url: 'https://authentication-phi-six.vercel.app',
+                url: 'https://authentication-seven-psi.vercel.app',
                 description: 'Production Server',
             },
         ],
