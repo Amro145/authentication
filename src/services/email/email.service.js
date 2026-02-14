@@ -7,7 +7,7 @@ export const verificationEmail = async (email, code, name) => {
             from: `${sender.name} <${sender.email}>`,
             to: [email],
             subject: "Verify Your Email",
-            html: `<h1>Hello ${name},</h1><p>Your verification code is: <strong>${code}</strong></p><p>This code will expire in 24 hours.</p>`,
+            html: VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", code).replace("{userName}", name),
         });
 
         if (error) throw error;
@@ -41,7 +41,7 @@ export const sendResetPasswordEmail = async (email, resetURL, name) => {
             from: `${sender.name} <${sender.email}>`,
             to: [email],
             subject: "Reset your password",
-            html: `<h1>Hello ${name},</h1><p>We received a request to reset your password. Click the link below to set a new one:</p><p><a href="${resetURL}">Reset Password</a></p><p>This link will expire in 1 hour.</p>`,
+            html: PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL).replace("{userName}", name),
         });
 
         if (error) throw error;
