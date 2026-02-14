@@ -16,7 +16,22 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
+            imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+            connectSrc: ["'self'", "https://authentication-seven-psi.vercel.app", "http://localhost:3000"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'self'"],
+            workerSrc: ["'self'", "blob:"]
+        },
+    },
+}));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes

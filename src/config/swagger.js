@@ -76,10 +76,17 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css";
+
 export const setupSwagger = (app) => {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
         swaggerOptions: {
             persistAuthorization: true,
         },
+        customCssUrl: CSS_URL,
+        customJs: [
+            'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
+        ],
     }));
 };
