@@ -101,7 +101,11 @@ export const signIn = asyncHandler(async (req, res, next) => {
 });
 
 export const logout = asyncHandler(async (req, res, next) => {
-    res.clearCookie(COOKIE_NAME);
+    res.clearCookie(COOKIE_NAME, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+    });
     res.status(200).json({
         success: true,
         message: "Logged out successfully!",
